@@ -9,6 +9,7 @@ Quintus.GameScenes = function(Q) {
     });
 
     Q.scene('Level', function(stage) {
-    	Q.man = stage.insert(new Q.Man());
+    	stage.insert(new Q.Man());
+        stage.insert(new Q.NormalBrick());
     });
 };
