@@ -4,14 +4,35 @@ Quintus.GameSprites = function(Q) {
 	Q.Sprite.extend('Man', {
 		init: function(p) {
 			this._super(p, {
-                asset: 'stand_man.png',
+                sprite: 'man',
+                sheet: 'man',
 				x: Q.width / 2,
 				y: 0,
-				scale: 0.5
+                w: 50,
+                h: 60,
+                vx: 0,
+                vy: 0
+
 			});
 
-            this.add("2d, platformerControls");
-		}
+            this.add("2d, platformerControls, animation");
+		},
+
+        step: function(dt) {
+            console.log('world' + this.p.vx);
+            if (this.p.vy > 0) {
+                console.log('drop');
+                this.play('drop');
+            } else {
+                if (this.p.vx > 0) {
+                    this.play('run_right');
+                } else if (this.p.vx < 0) {
+                    this.play('run_left');
+                } else {
+                    this.play('stand');
+                }
+            }
+        }
 	});
 
 
