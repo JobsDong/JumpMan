@@ -1,9 +1,10 @@
 Quintus.GameSprites = function(Q) {
-	
+
+    //
 	//man
 	Q.Sprite.extend('Man', {
-		init: function(p) {
-			this._super(p, {
+        init: function(p) {
+            this._super(p, {
                 sprite: 'man',
                 sheet: 'man',
 				x: Q.width / 2,
@@ -12,13 +13,18 @@ Quintus.GameSprites = function(Q) {
                 h: 60,
                 vx: 0,
                 vy: 0
-
 			});
 
-            this.add("2d, platformerControls, animation");
+            this.add("platformerControls, animation");
 		},
 
         step: function(dt) {
+            if (this.p.x > Q.width - 40) {
+                this.p.x = Q.width - 40;
+            } else if (this.p.x < 40) {
+                this.p.x = 40;
+            }
+
             if (this.p.vy > 0) {
                 this.play('drop');
             } else {
@@ -40,15 +46,16 @@ Quintus.GameSprites = function(Q) {
                 asset: 'ceil.png',
                 x: Q.width / 2,
                 y: 0,
-                speed: 2
+                speed: 0
             });
         },
 
         step: function(dt) {
-            this.p.y += this.p.speed;            
-            if (this.p.y % 75 == 0) {
+            this.p.y += this.p.speed;
+            if (this.p.y !== 0 && this.p.y % 75 == 0) {
                 Q.brickCreator.p.createBrick = true;
             }
+
             this.stage.viewport.centerOn(Q.width / 2, this.p.y + Q.height/2);
         }
     });
@@ -63,11 +70,12 @@ Quintus.GameSprites = function(Q) {
         }
     });
 
+    //brick creator
     Q.GameObject.extend('BrickCreator', {
         init: function() {
             this.p = {
-                createBrick: false,
-            }
+                createBrick: false
+            };
 
             Q.brickCreator = this;
         },
