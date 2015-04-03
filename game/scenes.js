@@ -9,7 +9,10 @@ Quintus.GameScenes = function(Q) {
     });
 
     Q.scene('Level', function(stage) {
-    	stage.insert(new Q.Man());
-        stage.insert(new Q.NormalBrick());
+        Q.brickCreator = stage.insert(new Q.BrickCreator());
+        Q.ceil = stage.insert(new Q.Ceil());
+        Q.man = stage.insert(new Q.Man());
+        stage.insert(new Q.NormalBrick({x: Q.width / 2, y: Q.height / 2}));
+        stage.add("viewport");
     });
 };

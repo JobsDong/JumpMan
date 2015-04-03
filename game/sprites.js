@@ -7,7 +7,7 @@ Quintus.GameSprites = function(Q) {
                 sprite: 'man',
                 sheet: 'man',
 				x: Q.width / 2,
-				y: 0,
+				y: Q.height / 2 - 20,
                 w: 50,
                 h: 60,
                 vx: 0,
@@ -19,9 +19,7 @@ Quintus.GameSprites = function(Q) {
 		},
 
         step: function(dt) {
-            console.log('world' + this.p.vx);
             if (this.p.vy > 0) {
-                console.log('drop');
                 this.play('drop');
             } else {
                 if (this.p.vx > 0) {
@@ -35,15 +33,50 @@ Quintus.GameSprites = function(Q) {
         }
 	});
 
+    //Ceil
+    Q.Sprite.extend('Ceil', {
+        init: function(p) {
+            this._super(p, {
+                asset: 'ceil.png',
+                x: Q.width / 2,
+                y: 0,
+                speed: 2
+            });
+        },
+
+        step: function(dt) {
+            this.p.y += this.p.speed;            
+            if (this.p.y % 75 == 0) {
+                Q.brickCreator.p.createBrick = true;
+            }
+            this.stage.viewport.centerOn(Q.width / 2, this.p.y + Q.height/2);
+        }
+    });
 
     //normal_brick
     Q.Sprite.extend('NormalBrick', {
         init: function(p) {
             this._super(p, {
                 asset: 'normal_brick.png',
-                x: Q.width / 2,
-                y: Q.height / 2
-            })
+                x: Q.random(60, Q.width - 60)
+            });
+        }
+    });
+
+    Q.GameObject.extend('BrickCreator', {
+        init: function() {
+            this.p = {
+                createBrick: false,
+            }
+
+            Q.brickCreator = this;
+        },
+
+        update: function(dt) {
+            if (this.p.createBrick) {
+                this.p.createBrick = false;
+                this.stage.insert(new Q.NormalBrick({y: Q.ceil.p.y + Q.height}));
+            }
         }
     });
 	

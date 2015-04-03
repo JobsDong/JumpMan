@@ -7,6 +7,10 @@ window.addEventListener('load', function() {
 			height: 480
 		}).controls();
 
+        Q.random = function(min, max) {
+            return Math.floor(min + Math.random() * (max - min));
+        }
+
     Q.animations('man', {
         run_right: {frames:[3, 4], rate: 1/5, flip: false, loop: true},
         run_left: {frames:[1, 2], rate: 1/5, flip: false, loop: true},
@@ -15,10 +19,10 @@ window.addEventListener('load', function() {
     });
 
     Q.load([
-        'background.png', 'sprites.png', 'sprites.json', 'normal_brick.png'], function() {
+        'background.png', 'sprites.png', 'sprites.json', 'normal_brick.png', 'ceil.png'], function() {
 
         Q.compileSheets('sprites.png', 'sprites.json');
             Q.stageScene('Background');
-            Q.stageScene('Level', 1);
+            Q.stageScene('Level', 1, {sort: true});
         });
 });
