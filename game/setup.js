@@ -1,12 +1,12 @@
 window.addEventListener('load', function() {
 
 	var Q = window.Q = Quintus({development: true})
-		.include('Scenes, Sprites, Input, 2D, Anim, UI')
+		.include('Scenes, Sprites, Input, 2D, Anim, UI, Touch')
 		.include('GameScenes, GameSprites')
 		.setup({
 			width: 320,
 			height: 480
-		}).controls();
+		}).controls().touch();
 
         Q.random = function(min, max) {
             return Math.floor(min + Math.random() * (max - min));
@@ -20,11 +20,11 @@ window.addEventListener('load', function() {
     });
 
     Q.load(['background.png', 'sprites.png', 'sprites.json',
-            'normal_brick.png', 'ceil.png', 'border.png', 'get_ready.png'], function() {
+            'normal_brick.png', 'ceil.png', 'border.png', 'get_ready.png', 'start.png'], function() {
         Q.compileSheets('sprites.png', 'sprites.json');
         Q.stageScene('Background');
-        Q.stageScene('Level', 1, {sort: true});
-        Q.stageScene('HUD', 2);
+        Q.stageScene('Level', 1, {sort:true});
+        Q.stageScene('Menu', 2);
         //Q.stageScene('Menu', 2);
     });
 });

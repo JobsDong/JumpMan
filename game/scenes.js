@@ -33,35 +33,37 @@ Quintus.GameScenes = function(Q) {
             z: 1
         }));
 
-        Q.man = stage.insert(new Q.Man());
+        //man
+        Q.man = stage.insert(new Q.Man({x: Q.width/2, y: 238}));
+
+        stage.insert(new Q.NormalBrick({x:80, y: 175}));
+        stage.insert(new Q.NormalBrick({x:150, y: 275}));
+        stage.insert(new Q.NormalBrick({x:240, y: 375}));
 
         stage.add("viewport");
     });
 
 
-    //HUD
-    Q.scene('HUD', function (stage) {
+    //menu
+    Q.scene('Menu', function (stage) {
         var getReady = stage.insert(new Q.Sprite({
             asset: 'get_ready.png',
             x: Q.width / 2,
-            y: (Q.height / 2) - 41
+            y: (Q.height / 2) + 70
         }));
 
-        stage.insert(new Q.UI.Container({
-            x: Q.width / 2,
-            y: 50
-        }));
 
         stage.insert(new Q.UI.Button({
+            asset: 'start.png',
             x: Q.width / 2,
-            y: Q.height / 2,
-            w: Q.width,
-            h: Q.height
-        }), function() {
+            y: Q.height / 2 + 100
+        }, function() {
             getReady.destroy();
-            Q.man.add('2d');
+            this.destroy();
+            Q.ceil.p.speed = 2;
+            Q.man.add("2d");
             Q.man.stage.insert(new Q.BrickCreator());
-        });
+        }));
 
     });
 };

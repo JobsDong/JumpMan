@@ -1,6 +1,5 @@
 Quintus.GameSprites = function(Q) {
 
-    //
 	//man
 	Q.Sprite.extend('Man', {
         init: function(p) {
@@ -52,7 +51,7 @@ Quintus.GameSprites = function(Q) {
 
         step: function(dt) {
             this.p.y += this.p.speed;
-            if (this.p.y !== 0 && this.p.y % 75 == 0) {
+            if (this.p.y !== 0 && this.p.y % 100 == 0) {
                 Q.brickCreator.p.createBrick = true;
             }
 
@@ -67,6 +66,12 @@ Quintus.GameSprites = function(Q) {
                 asset: 'normal_brick.png',
                 x: Q.random(60, Q.width - 60)
             });
+        },
+
+        step: function(dt) {
+            if (this.p.y < Q.ceil.p.y) {
+                this.destroy();
+            }
         }
     });
 
