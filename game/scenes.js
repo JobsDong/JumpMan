@@ -36,9 +36,9 @@ Quintus.GameScenes = function(Q) {
         //man
         Q.man = stage.insert(new Q.Man({x: Q.width/2, y: 238}));
 
-        stage.insert(new Q.NormalBrick({x:80, y: 175}));
-        stage.insert(new Q.NormalBrick({x:150, y: 275}));
-        stage.insert(new Q.NormalBrick({x:240, y: 375}));
+        stage.insert(new Q.Brick({brickType:'normal', asset:'normal_brick.png', x:80, y: 175}));
+        stage.insert(new Q.Brick({brickType:'normal', asset:'normal_brick.png', x:150, y: 275}));
+        stage.insert(new Q.Brick({brickType:'normal', asset:'normal_brick.png', x:240, y: 375}));
 
         stage.add("viewport");
     });
@@ -61,7 +61,7 @@ Quintus.GameScenes = function(Q) {
             getReady.destroy();
             this.destroy();
             Q.ceil.p.speed = 2;
-            Q.man.add("2d");
+            Q.man.add("2d, platformerControls");
             Q.man.stage.insert(new Q.BrickCreator());
         }));
 

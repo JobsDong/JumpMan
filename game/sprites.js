@@ -8,20 +8,20 @@ Quintus.GameSprites = function(Q) {
                 sheet: 'man',
 				x: Q.width / 2,
 				y: Q.height / 2 - 20,
-                w: 50,
-                h: 60,
+                w: 30,
+                h: 36,
                 vx: 0,
                 vy: 0
 			});
 
-            this.add("platformerControls, animation");
+            this.add("animation");
 		},
 
         step: function(dt) {
-            if (this.p.x > Q.width - 40) {
-                this.p.x = Q.width - 40;
-            } else if (this.p.x < 40) {
-                this.p.x = 40;
+            if (this.p.x > Q.width - 30) {
+                this.p.x = Q.width - 30;
+            } else if (this.p.x < 30) {
+                this.p.x = 30;
             }
 
             if (this.p.vy > 0) {
@@ -59,12 +59,17 @@ Quintus.GameSprites = function(Q) {
         }
     });
 
-    //normal_brick
-    Q.Sprite.extend('NormalBrick', {
+    //brick
+    Q.Sprite.extend('Brick', {
         init: function(p) {
+            var brickTypes = ['normal', 'miss', 'flip', 'thorn'];
+            var brickType = brickTypes[Q.random(0, brickTypes.length)];
+
             this._super(p, {
-                asset: 'normal_brick.png',
+                brickType: brickType,
+                asset: brickType + '_brick.png',
                 x: Q.random(60, Q.width - 60)
+
             });
         },
 
@@ -88,7 +93,7 @@ Quintus.GameSprites = function(Q) {
         update: function(dt) {
             if (this.p.createBrick) {
                 this.p.createBrick = false;
-                this.stage.insert(new Q.NormalBrick({y: Q.ceil.p.y + Q.height}));
+                this.stage.insert(new Q.Brick({y: Q.ceil.p.y + Q.height}));
             }
         }
     });
