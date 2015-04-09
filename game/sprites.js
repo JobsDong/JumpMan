@@ -2,6 +2,7 @@ Quintus.GameSprites = function(Q) {
 
 	//man
 	Q.Sprite.extend('Man', {
+
         init: function(p) {
             this._super(p, {
                 sprite: 'man',
@@ -15,9 +16,57 @@ Quintus.GameSprites = function(Q) {
 			});
 
             this.add("animation");
+            this.on("bump.bottom", this, "stomp");
+            this.on("hit.sprite", this, "hits");
 		},
 
+        hits: function(collision) {
+            if (collision.obj.isA("Ceil")) {
+                Q.state.dec('lives', 2);
+                if (Q.stage.get('lives') <= 0) {
+                    //end game
+                }
+
+                this.p.vy = 300;
+                this.p.y += 15;
+            }
+        },
+
+        stomp: function(collision) {
+            if (collision.obj.isA("Brick")) {
+                Q.state.inc('floor', 1);
+
+                if (collision.obj.p.brickType == 'miss') {
+                    if (Q.state.get('lives') < Q.MAX_LIVES) {
+                        Q.state.inc('lives', 1);
+                    }
+                    collision.obj.destroy();
+
+                } else if (collision.obj.p.brickType == 'flip') {
+                    if (Q.state.get('lives') < Q.MAX_LIVES) {
+                        Q.state.inc('lives', 1);
+                    }
+
+                    this.p.vy = -300;
+
+                } else if (collision.obj.p.brickType == 'thorn') {
+                    Q.state.dec('lives', 1);
+                    if (Q.state.get('lives') <= 0) {
+                        //end game
+                    }
+                } else if (collision.obj.p.brickType == 'normal') {
+                    if (Q.state.get('lives') < Q.MAX_LIVES) {
+                        Q.state.inc('lives', 1);
+                    }
+                }
+            }
+        },
+
         step: function(dt) {
+            if (Q.ceil.p.y + Q.width < this.p.y) {
+                //end game
+            }
+
             if (this.p.x > Q.width - 30) {
                 this.p.x = Q.width - 30;
             } else if (this.p.x < 30) {
@@ -69,7 +118,6 @@ Quintus.GameSprites = function(Q) {
                 brickType: brickType,
                 asset: brickType + '_brick.png',
                 x: Q.random(60, Q.width - 60)
-
             });
         },
 
@@ -78,6 +126,7 @@ Quintus.GameSprites = function(Q) {
                 this.destroy();
             }
         }
+
     });
 
     //brick creator

@@ -12,6 +12,7 @@ Quintus.GameScenes = function(Q) {
     //Level
     Q.scene('Level', function(stage) {
         Q.state.set('floor', 0);
+        Q.state.set('lives', 5);
 
         Q.ceil = stage.insert(new Q.Ceil());
 

@@ -8,9 +8,11 @@ window.addEventListener('load', function() {
 			height: 480
 		}).controls().touch();
 
-        Q.random = function(min, max) {
-            return Math.floor(min + Math.random() * (max - min));
-        };
+    Q.random = function(min, max) {
+        return Math.floor(min + Math.random() * (max - min));
+    };
+
+    Q.MAX_LIVES = 5;
 
     Q.animations('man', {
         run_right: {frames:[3, 4], rate: 1/5, flip: false, loop: true},
