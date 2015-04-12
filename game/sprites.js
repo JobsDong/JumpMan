@@ -12,19 +12,28 @@ Quintus.GameSprites = function(Q) {
                 w: 30,
                 h: 36,
                 vx: 0,
-                vy: 0
+                vy: 0,
+                dead: false
 			});
 
             this.add("animation");
             this.on("bump.bottom", this, "stomp");
             this.on("hit.sprite", this, "hits");
+            this.on("fail", this, "fail");
 		},
+
+        fail: function() {
+            this.p.dead = true;
+            Q("Brick", 1).set('sensor', true);
+        },
 
         hits: function(collision) {
             if (collision.obj.isA("Ceil")) {
                 Q.state.dec('lives', 2);
-                if (Q.stage.get('lives') <= 0) {
+                if (Q.state.get('lives') <= 0) {
                     //end game
+                    console.log("end");
+                    this.trigger("fail");
                 }
 
                 this.p.vy = 300;
@@ -33,6 +42,7 @@ Quintus.GameSprites = function(Q) {
         },
 
         stomp: function(collision) {
+            console.log("fuck");
             if (collision.obj.isA("Brick")) {
                 Q.state.inc('floor', 1);
 
@@ -63,8 +73,11 @@ Quintus.GameSprites = function(Q) {
         },
 
         step: function(dt) {
-            if (Q.ceil.p.y + Q.width < this.p.y) {
+            if (Q.ceil.p.y + Q.height < this.p.y) {
                 //end game
+                console.log("fail");
+                Q.state.set('lives', 0);
+                this.destroy();
             }
 
             if (this.p.x > Q.width - 30) {
@@ -99,9 +112,11 @@ Quintus.GameSprites = function(Q) {
         },
 
         step: function(dt) {
-            this.p.y += this.p.speed;
-            if (this.p.y !== 0 && this.p.y % 100 == 0) {
-                Q.brickCreator.p.createBrick = true;
+            if (Q.state.get('lives') > 0) {
+                this.p.y += this.p.speed;
+                if (this.p.y !== 0 && this.p.y % 100 == 0) {
+                    Q.brickCreator.p.createBrick = true;
+                }
             }
 
             this.stage.viewport.centerOn(Q.width / 2, this.p.y + Q.height/2);
@@ -117,11 +132,28 @@ Quintus.GameSprites = function(Q) {
             this._super(p, {
                 brickType: brickType,
                 asset: brickType + '_brick.png',
-                x: Q.random(60, Q.width - 60)
+                type: Q.SPRITE_DEFAULT,
+                x: Q.random(60, Q.width - 60),
+                fade: false
             });
+            this.on('fade', this, 'fade');
+        },
+
+        fade: function() {
+            this.p.fade = true;
+            this.p.fadeTimer = 0;
+            console.log("fade");
         },
 
         step: function(dt) {
+            if (this.p.fade) {
+                this.p.fadeTimer++;
+                console.log("hello" + this.p.fadeTimer);
+                if (this.p.fadeTimer > 24) {
+                    this.destroy();
+                }
+            }
+
             if (this.p.y < Q.ceil.p.y) {
                 this.destroy();
             }
