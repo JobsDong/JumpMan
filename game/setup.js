@@ -21,7 +21,7 @@ window.addEventListener('load', function() {
         drop: {frames: [5, 6], rate: 1/10, loop: false}
     });
 
-    Q.load(['mans.png', 'mans.json',
+    Q.load(['mans.png', 'mans.json', 'title.png', 'game_over.png',
             'background.png', 'ceil.png', 'border.png', 'get_ready.png', 'start.png',
             'normal_brick.png', 'miss_brick.png', 'flip_brick.png', 'thorn_brick.png'], function() {
         Q.compileSheets('mans.png', 'mans.json');

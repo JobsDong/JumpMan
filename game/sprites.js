@@ -63,6 +63,8 @@ Quintus.GameSprites = function(Q) {
                     Q.state.dec('lives', 1);
                     if (Q.state.get('lives') <= 0) {
                         //end game
+                        console.log("end");
+                        this.trigger("fail");
                     }
                 } else if (collision.obj.p.brickType == 'normal') {
                     if (Q.state.get('lives') < Q.MAX_LIVES) {
@@ -78,6 +80,8 @@ Quintus.GameSprites = function(Q) {
                 console.log("fail");
                 Q.state.set('lives', 0);
                 this.destroy();
+
+                Q.stageScene('GameOver', 3);
             }
 
             if (this.p.x > Q.width - 30) {
@@ -123,7 +127,64 @@ Quintus.GameSprites = function(Q) {
         }
     });
 
-    //brick
+    //LightBox
+    Q.Sprite.extend('LightBox', {
+        init: function(p) {
+            this._super(p, {
+                x: Q.width / 2,
+                y: Q.height / 2,
+                w: Q.width,
+                h: Q.height,
+                opacity: 0,
+                color: '#000',
+                duration: 1,
+                maxOpacity: 1,
+                between: function() {}
+            });
+
+            this.add('tween');
+            this.animate({ opacity: this.p.maxOpacity }, this.p.duration / 2, {
+                    callback: function() {
+                        this.p.between();
+                    }
+                }).chain({ opacity: 0 }, this.p.duration / 2, {
+                    callback: function() {
+                        Q.clearStage(3);
+                    }
+                });
+        }
+    });
+
+    //GameOver
+    Q.Sprite.extend('GameOver', {
+        init: function(p) {
+            this._super(p, {
+                asset: 'game_over.png',
+                x: Q.width / 2,
+                y: (Q.height / 2) - 51,
+                opacity: 0
+            });
+
+            this.add('tween');
+            this.animate({ y: this.p.y - 5, opacity: 1 }, .15)
+                .chain({ y: this.p.y + 5 }, .15);
+        }
+    });
+
+    //ScoreBoard
+    Q.Sprite.extend('ScoreBoard', {
+        init: function(p) {
+            this._super(p, {
+                asset: 'scoreboard.png',
+                x: Q.width / 2,
+                y: Q.height + 30
+            });
+
+            this.add('tween');
+        }
+    });
+
+    //Brick
     Q.Sprite.extend('Brick', {
         init: function(p) {
             var brickTypes = ['normal', 'miss', 'flip', 'thorn'];
