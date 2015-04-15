@@ -12,7 +12,7 @@ Quintus.GameScenes = function(Q) {
     //Level
     Q.scene('Level', function(stage) {
         Q.state.set('floor', 0);
-        Q.state.set('lives', 5);
+        Q.state.set('live', 5);
 
         Q.ceil = stage.insert(new Q.Ceil());
 
@@ -35,9 +35,9 @@ Quintus.GameScenes = function(Q) {
         }));
 
         //man
-        Q.man = stage.insert(new Q.Man({x: Q.width/2, y: 238}));
+        Q.man = stage.insert(new Q.Man({x: Q.width/2, y: 150}));
 
-        stage.insert(new Q.Brick({brickType:'normal', asset:'normal_brick.png', x:80, y: 175}));
+        stage.insert(new Q.Brick({brickType:'normal', asset:'normal_brick.png', x:60, y: 150}));
         stage.insert(new Q.Brick({brickType:'normal', asset:'normal_brick.png', x:150, y: 275}));
         stage.insert(new Q.Brick({brickType:'normal', asset:'normal_brick.png', x:240, y: 375}));
 
@@ -45,31 +45,30 @@ Quintus.GameScenes = function(Q) {
     });
 
     //HUD
-    Q.Scene('HUD', function (stage) {
-        var title = stage.insert(new Q.Sprite({
-            asset: 'title.png',
-            x: Q.width / 2,
-            y: (Q.height / 2) - 30
+    Q.scene('HUD', function (stage) {
+        Q.healthContainer = stage.insert(new Q.UI.Container({
+            x: 0, y: 0
         }));
 
+        Q.displayHealth(5, Q.healthContainer);
+        Q.healthContainer.fit(20);
+    });
+
+    //Begin
+    Q.scene('Begin', function(stage) {
         var getReady = stage.insert(new Q.Sprite({
             asset: 'get_ready.png',
             x: Q.width / 2,
-            y: (Q.height / 2) + 70
-        }));
-
-        Q.scoreContainer = stage.insert(new Q.UI.Container({
-            x: Q.width / 2,
-            y: 50
+            y: Q.height / 2 - 30
         }));
 
         stage.insert(new Q.UI.Button({
             asset: 'start.png',
             x: Q.width / 2,
-            y: Q.height / 2 + 100
+            y: Q.height / 2
         }, function() {
-            title.destroy();
             getReady.destroy();
+            this.destroy();
             Q.clearStage(2);
             Q.ceil.p.speed = 2;
             Q.man.add("2d, platformerControls");
@@ -83,10 +82,19 @@ Quintus.GameScenes = function(Q) {
             var gameOver = stage.insert(new Q.GameOver());
 
             setTimeout(function() {
-                var scoreBoard = stage.insert(new Q.ScoreBoard()),
-                    score = Q.state.get('floor');
+                var scoreBoard = stage.insert(new Q.ScoreBoard());
+
+                if (Q.state.get('floor') > Q.best_personal) {
+                    Q.best_personal = Q.state.get('floor');
+                }
 
                 var scoreContainer = stage.insert(new Q.UI.Container(), scoreBoard);
+                scoreContainer.insert(new Q.UI.Text({x:-20, y: -35,
+                    label: Q.state.get('floor') + " floors", color: "green", size: 15}));
+
+                var bestContainer = stage.insert(new Q.UI.Container(), scoreBoard);
+                bestContainer.insert(new Q.UI.Text({x:-20, y: -5,
+                    label: Q.best_personal + " floors", color: "green", size: 15}));
 
                 scoreBoard.animate({y: Q.height/2}, .5, Q.Easing.Quadratic.Out, {
                     callback: function() {
@@ -96,6 +104,7 @@ Quintus.GameScenes = function(Q) {
                                 x: Q.width / 2,
                                 y: (Q.height / 2) + 58
                             }, function() {
+                                console.log("board");
                                 this.destroy();
                                 Q.stageScene(3, 'Fade');
                             }));

@@ -29,8 +29,9 @@ Quintus.GameSprites = function(Q) {
 
         hits: function(collision) {
             if (collision.obj.isA("Ceil")) {
-                Q.state.dec('lives', 2);
-                if (Q.state.get('lives') <= 0) {
+                Q.state.dec('live', 1);
+                Q.displayHealth(Q.state.get('live'), Q.healthContainer);
+                if (Q.state.get('live') <= 0) {
                     //end game
                     console.log("end");
                     this.trigger("fail");
@@ -42,33 +43,34 @@ Quintus.GameSprites = function(Q) {
         },
 
         stomp: function(collision) {
-            console.log("fuck");
             if (collision.obj.isA("Brick")) {
-                Q.state.inc('floor', 1);
-
                 if (collision.obj.p.brickType == 'miss') {
-                    if (Q.state.get('lives') < Q.MAX_LIVES) {
-                        Q.state.inc('lives', 1);
+                    if (Q.state.get('live') < Q.MAX_LIVES) {
+                        Q.state.inc('live', 1);
+                        Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                     }
                     collision.obj.destroy();
 
                 } else if (collision.obj.p.brickType == 'flip') {
-                    if (Q.state.get('lives') < Q.MAX_LIVES) {
-                        Q.state.inc('lives', 1);
+                    if (Q.state.get('live') < Q.MAX_LIVES) {
+                        Q.state.inc('live', 1);
+                        Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                     }
 
                     this.p.vy = -300;
 
                 } else if (collision.obj.p.brickType == 'thorn') {
                     Q.state.dec('lives', 1);
-                    if (Q.state.get('lives') <= 0) {
+                    Q.displayHealth(Q.state.get('live'), Q.healthContainer);
+                    if (Q.state.get('live') <= 0) {
                         //end game
                         console.log("end");
                         this.trigger("fail");
                     }
                 } else if (collision.obj.p.brickType == 'normal') {
-                    if (Q.state.get('lives') < Q.MAX_LIVES) {
-                        Q.state.inc('lives', 1);
+                    if (Q.state.get('live') < Q.MAX_LIVES) {
+                        Q.state.inc('live', 1);
+                        Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                     }
                 }
             }
@@ -78,7 +80,8 @@ Quintus.GameSprites = function(Q) {
             if (Q.ceil.p.y + Q.height < this.p.y) {
                 //end game
                 console.log("fail");
-                Q.state.set('lives', 0);
+                Q.state.set('live', 0);
+                Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                 this.destroy();
 
                 Q.stageScene('GameOver', 3);
@@ -116,7 +119,7 @@ Quintus.GameSprites = function(Q) {
         },
 
         step: function(dt) {
-            if (Q.state.get('lives') > 0) {
+            if (Q.state.get('live') > 0) {
                 this.p.y += this.p.speed;
                 if (this.p.y !== 0 && this.p.y % 100 == 0) {
                     Q.brickCreator.p.createBrick = true;
@@ -161,7 +164,7 @@ Quintus.GameSprites = function(Q) {
             this._super(p, {
                 asset: 'game_over.png',
                 x: Q.width / 2,
-                y: (Q.height / 2) - 51,
+                y: (Q.height / 2) - 80,
                 opacity: 0
             });
 
@@ -181,6 +184,17 @@ Quintus.GameSprites = function(Q) {
             });
 
             this.add('tween');
+        }
+    });
+
+    //Health
+    Q.Sprite.extend('Health', {
+        init: function(p) {
+            this._super(p, {
+                sprite: 'health',
+                sheet: 'health',
+                frame: 0
+            });
         }
     });
 
@@ -236,6 +250,7 @@ Quintus.GameSprites = function(Q) {
             if (this.p.createBrick) {
                 this.p.createBrick = false;
                 this.stage.insert(new Q.Brick({y: Q.ceil.p.y + Q.height}));
+                Q.state.inc('floor', 1);
             }
         }
     });
