@@ -1,6 +1,6 @@
 window.addEventListener('load', function() {
 
-	var Q = window.Q = Quintus({development: true})
+	var Q = window.Q = Quintus()
 		.include('Scenes, Sprites, Input, 2D, Anim, UI, Touch')
 		.include('GameScenes, GameSprites')
 		.setup({
