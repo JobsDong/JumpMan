@@ -28,13 +28,11 @@ Quintus.GameSprites = function(Q) {
         },
 
         hits: function(collision) {
-            console.log("hit");
             if (collision.obj.isA("Ceil")) {
                 Q.state.dec('live', 1);
                 Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                 if (Q.state.get('live') <= 0) {
                     //end game
-                    console.log("end");
                     this.trigger("fail");
                 }
 
@@ -44,7 +42,6 @@ Quintus.GameSprites = function(Q) {
         },
 
         stomp: function(collision) {
-            console.log("stomp");
             if (collision.obj.isA("Brick")) {
 
                 if (collision.obj.p.brickType == 'miss') {
@@ -67,7 +64,6 @@ Quintus.GameSprites = function(Q) {
                     Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                     if (Q.state.get('live') <= 0) {
                         //end game
-                        console.log("end");
                         this.trigger("fail");
                     }
                 } else if (collision.obj.p.brickType == 'normal') {
@@ -82,7 +78,6 @@ Quintus.GameSprites = function(Q) {
         step: function(dt) {
             if (Q.ceil.p.y + Q.height < this.p.y) {
                 //end game
-                console.log("fail");
                 Q.state.set('live', 0);
                 Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                 this.destroy();
@@ -126,6 +121,9 @@ Quintus.GameSprites = function(Q) {
                 this.p.y += this.p.speed;
                 if (this.p.y !== 0 && this.p.y % 100 == 0) {
                     Q.brickCreator.p.createBrick = true;
+                }
+                if (this.p.y !== 0 && this.p.y % 1000 == 0) {
+                    this.p.speed += 0.5;
                 }
             }
 

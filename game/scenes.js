@@ -84,8 +84,10 @@ Quintus.GameScenes = function(Q) {
             setTimeout(function() {
                 var scoreBoard = stage.insert(new Q.ScoreBoard());
 
+
                 if (Q.state.get('floor') > Q.best_personal) {
                     Q.best_personal = Q.state.get('floor');
+                    localStorage.setItem('JumpMan.personalBest', Q.state.get('floor'));
                 }
 
                 var scoreContainer = stage.insert(new Q.UI.Container(), scoreBoard);
@@ -104,7 +106,6 @@ Quintus.GameScenes = function(Q) {
                                 x: Q.width / 2,
                                 y: (Q.height / 2) + 58
                             }, function() {
-                                console.log("board");
                                 this.destroy();
                                 Q.stageScene(3, 'Fade');
                             }));

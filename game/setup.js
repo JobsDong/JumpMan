@@ -13,7 +13,10 @@ window.addEventListener('load', function() {
     };
 
     Q.MAX_HEALTH = 5;
-    Q.best_personal = 0;
+    Q.best_personal = localStorage.getItem('JumpMan.personalBest');
+    if (Q.best_personal === null) {
+        Q.best_personal = 0;
+    }
 
     Q.displayHealth = function(number, container) {
         for (var i = 0; i < number; i++) {
