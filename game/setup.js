@@ -43,7 +43,7 @@ window.addEventListener('load', function() {
         Q.compileSheets('health.png', 'health.json');
         Q.stageScene('Background', 0);
         Q.stageScene('Level', 1, {sort:true});
-        Q.stageScene('Begin', 2);
         Q.stageScene('HUD', 3);
+        Q.stageScene('Begin', 2);
     });
 });

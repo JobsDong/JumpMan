@@ -79,11 +79,10 @@ Quintus.GameScenes = function(Q) {
     //GameOver
     Q.scene('GameOver', function (stage) {
         setTimeout(function(){
-            var gameOver = stage.insert(new Q.GameOver());
+            stage.insert(new Q.GameOver());
 
             setTimeout(function() {
                 var scoreBoard = stage.insert(new Q.ScoreBoard());
-
 
                 if (Q.state.get('floor') > Q.best_personal) {
                     Q.best_personal = Q.state.get('floor');
@@ -106,8 +105,9 @@ Quintus.GameScenes = function(Q) {
                                 x: Q.width / 2,
                                 y: (Q.height / 2) + 58
                             }, function() {
+                                //Q.clearStage(2);
                                 this.destroy();
-                                Q.stageScene(3, 'Fade');
+                                Q.stageScene('Fade', 2);
                             }));
                         });
                     }
@@ -120,12 +120,12 @@ Quintus.GameScenes = function(Q) {
     Q.scene('Fade', function (stage) {
         stage.insert(new Q.LightBox({
             between: function() {
-                Q.bg.p.frame = Q.random(2);
                 Q.clearStage(1);
                 Q.clearStage(2);
                 Q.clearStage(3);
                 Q.stageScene('Level', 1, { sort: true });
-                Q.stageScene('HUD', 2);
+                Q.stageScene('HUD', 3);
+                Q.stageScene('Begin', 2);
             }
         }));
     });

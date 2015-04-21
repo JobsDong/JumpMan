@@ -82,7 +82,7 @@ Quintus.GameSprites = function(Q) {
                 Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                 this.destroy();
 
-                Q.stageScene('GameOver', 3);
+                Q.stageScene('GameOver', 2);
             }
 
             if (this.p.x > Q.width - 30) {
