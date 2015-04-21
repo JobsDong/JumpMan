@@ -13,6 +13,8 @@ Quintus.GameSprites = function(Q) {
                 h: 36,
                 vx: 0,
                 vy: 0,
+                lastStompBrick: undefined,
+                lastStompMissY: undefined,
                 dead: false
 			});
 
@@ -29,15 +31,15 @@ Quintus.GameSprites = function(Q) {
 
         hits: function(collision) {
             if (collision.obj.isA("Ceil")) {
-                Q.state.dec('live', 1);
+                Q.state.dec('live', 2);
                 Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                 if (Q.state.get('live') <= 0) {
                     //end game
                     this.trigger("fail");
                 }
 
-                this.p.vy = 300;
-                this.p.y += 15;
+                this.p.vy = 500;
+                this.p.y += 50;
             }
         },
 
@@ -49,7 +51,14 @@ Quintus.GameSprites = function(Q) {
                         Q.state.inc('live', 1);
                         Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                     }
-                    collision.obj.destroy();
+                    if (this.p.lastStompBrick == collision.obj) {
+                        if (this.p.lastStompMissY !== undefined && Q.ceil.p.y - this.p.lastStompMissY >= 30) {
+                            collision.obj.destroy();
+                            this.p.lastStompMissY = undefined;
+                        }
+                    } else {
+                        this.p.lastStompMissY = Q.ceil.p.y;
+                    }
 
                 } else if (collision.obj.p.brickType == 'flip') {
                     if (Q.state.get('live') < Q.MAX_HEALTH) {
@@ -59,19 +68,20 @@ Quintus.GameSprites = function(Q) {
 
                     this.p.vy = -300;
 
-                } else if (collision.obj.p.brickType == 'thorn') {
-                    Q.state.dec('live', 1);
+                } else if (collision.obj.p.brickType == 'thorn' && this.p.lastStompBrick != collision.obj) {
+                    Q.state.dec('live', 2);
                     Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                     if (Q.state.get('live') <= 0) {
                         //end game
                         this.trigger("fail");
                     }
-                } else if (collision.obj.p.brickType == 'normal') {
+                } else if (collision.obj.p.brickType == 'normal' && this.p.lastStompBrick != collision.obj) {
                     if (Q.state.get('live') < Q.MAX_HEALTH) {
                         Q.state.inc('live', 1);
                         Q.displayHealth(Q.state.get('live'), Q.healthContainer);
                     }
                 }
+                this.p.lastStompBrick = collision.obj;
             }
         },
 
@@ -118,13 +128,14 @@ Quintus.GameSprites = function(Q) {
 
         step: function(dt) {
             if (Q.state.get('live') > 0) {
-                this.p.y += this.p.speed;
-                if (this.p.y !== 0 && this.p.y % 100 == 0) {
+                if (Q.brickCreator != undefined && this.p.y - Q.brickCreator.p.lastBrickY > 100) {
                     Q.brickCreator.p.createBrick = true;
+                    Q.brickCreator.p.lastBrickY = this.p.y;
                 }
                 if (this.p.y !== 0 && this.p.y % 1000 == 0) {
-                    this.p.speed += 0.5;
+                    this.p.speed += 1;
                 }
+                this.p.y += this.p.speed;
             }
 
             this.stage.viewport.centerOn(Q.width / 2, this.p.y + Q.height/2);
@@ -202,8 +213,18 @@ Quintus.GameSprites = function(Q) {
     //Brick
     Q.Sprite.extend('Brick', {
         init: function(p) {
-            var brickTypes = ['normal', 'miss', 'flip', 'thorn'];
-            var brickType = brickTypes[Q.random(0, brickTypes.length)];
+            var i = Q.random(0, 9);
+
+            var brickType = 'normal';
+            if (i >= 0 && i <= 3) {
+                brickType = 'normal';
+            } else if (i >= 4 && i <= 5) {
+                brickType = 'miss';
+            } else if (i >= 6 && i <= 7) {
+                brickType = 'flip';
+            } else if (i >= 8 && i <= 9) {
+                brickType = 'thorn';
+            }
 
             this._super(p, {
                 brickType: brickType,
@@ -226,7 +247,8 @@ Quintus.GameSprites = function(Q) {
     Q.GameObject.extend('BrickCreator', {
         init: function() {
             this.p = {
-                createBrick: false
+                createBrick: false,
+                lastBrickY: -300
             };
 
             Q.brickCreator = this;
@@ -235,7 +257,9 @@ Quintus.GameSprites = function(Q) {
         update: function(dt) {
             if (this.p.createBrick) {
                 this.p.createBrick = false;
-                this.stage.insert(new Q.Brick({y: Q.ceil.p.y + Q.height}));
+                if (Q.random(0, 9) != 0) {
+                    this.stage.insert(new Q.Brick({y: Q.ceil.p.y + Q.height}));
+                }
                 Q.state.inc('floor', 1);
             }
         }
