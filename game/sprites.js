@@ -47,16 +47,16 @@ Quintus.GameSprites = function(Q) {
             if (collision.obj.isA("Brick")) {
 
                 if (collision.obj.p.brickType == 'miss') {
-                    if (Q.state.get('live') < Q.MAX_HEALTH) {
-                        Q.state.inc('live', 1);
-                        Q.displayHealth(Q.state.get('live'), Q.healthContainer);
-                    }
                     if (this.p.lastStompBrick == collision.obj) {
                         if (this.p.lastStompMissY !== undefined && Q.ceil.p.y - this.p.lastStompMissY >= 30) {
                             collision.obj.destroy();
                             this.p.lastStompMissY = undefined;
                         }
                     } else {
+                        if (Q.state.get('live') < Q.MAX_HEALTH) {
+                            Q.state.inc('live', 1);
+                            Q.displayHealth(Q.state.get('live'), Q.healthContainer);
+                        }
                         this.p.lastStompMissY = Q.ceil.p.y;
                     }
 
@@ -122,6 +122,7 @@ Quintus.GameSprites = function(Q) {
                 asset: 'ceil.png',
                 x: Q.width / 2,
                 y: 0,
+                addSpeed: false,
                 speed: 0
             });
         },
@@ -132,7 +133,7 @@ Quintus.GameSprites = function(Q) {
                     Q.brickCreator.p.createBrick = true;
                     Q.brickCreator.p.lastBrickY = this.p.y;
                 }
-                if (this.p.y !== 0 && this.p.y % 1000 == 0) {
+                if (this.p.y !== 0 && this.p.y % 1500 == 0) {
                     this.p.speed += 1;
                 }
                 this.p.y += this.p.speed;
